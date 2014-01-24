@@ -70,18 +70,18 @@ best <- function(state, outcome) {
        ## Return hospital name for best in that state 
        ## using if...else for outcomes
        if(outcome=="heart attack") {
-         result <- min(ha.dat$Heart.Attack) 
-         return(result)
-         #return(Hospital.Name)
+         result <- ha.dat[ha.dat$Heart.Attack==min(ha.dat$Heart.Attack),] 
+         #return(result)
+         return(result$Hospital.Name)
        } else { 
          if(outcome=="heart failure") {
-           result <- min(ha.dat$Heart.Attack) 
-           return(result)
-           #return(Hospital.Name)
+           result <- hf.dat[hf.dat$Heart.Failure==min(hf.dat$Heart.Failure),] 
+           #return(result)
+           return(result$Hospital.Name)
          } else { # the last option, which is pneumonia
-           result <- min(ha.dat$Heart.Attack) 
-           return(result)
-           #return(Hospital.Name)
+           result <- pn.dat[pn.dat$Pneumonia==min(pn.dat$Pneumonia),] 
+           #return(result)
+           return(result.Hospital.Name)
          }
        }
               
