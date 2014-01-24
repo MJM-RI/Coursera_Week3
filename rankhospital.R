@@ -130,17 +130,3 @@ rankhospital <- function(state, outcome, num = "best") {
     else { stop("invalid state") }        
 
 }  # end rankhospital
-
-#  Tests of function
-rankhospital("TX", "heart failure", 4)
-#works
-
-rankhospital("MD", "heart attack", "worst")
-#works
-
-rankhospital("MN", "heart attack", 5000)
-# works
-
-rankhospital("bb", "heart attack", 5000)
-rankhospital("MN", "heart", 5000)
-#these work
