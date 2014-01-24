@@ -14,23 +14,22 @@
 # invalid state argument throws error via stop(): "invalid state"
 # invalid outcome throws error via stop(): "invalid outcome"
 
-#############################
-# Variable and data set list:
+###############################################################################
+# Variables, parameters, data sets:
 # outcome.dat - data set for outcome of care measures
 # state - fn. argument - state of interest
 # outcome - fn. argument - outcome of interest
 # num - fn. argument - ranking of interest (incl. "best", "worst")
 # out.set - vector of relevant outcomes
 # state.abb - built in data set of 2 letter state abbreviations
-# out.col - col. numbers for outcomes of interest (11, 17, 23)
-# out.stat - data for only the state of interest
-# out.min - min. value for outcome of interest and state of interest (best)
-# out.max - max. value for outcome of interest and state of interest (worst)
-# out.hosp - data for state, hospitals, outcomes of interest
-
+# Note: col. numbers for outcomes of interest are 11, 17, 23
+# out.state - data for only the state of interest
+# ha.dat, hf.dat, pn.dat - data for each outcome of interest
+# ha.rank, etc. - rank variables
+###############################################################################
 
 # Function:
-rankhospital <- function(state, outcome, num = "best") {  # beg. of fn.
+rankhospital <- function(state, outcome, num = "best") {  
   
   ## Read outcome data
   outcome.dat <- read.csv("outcome-of-care-measures.csv",
@@ -38,6 +37,7 @@ rankhospital <- function(state, outcome, num = "best") {  # beg. of fn.
   
   ## define valid outcomes
   out.set <- c("heart failure", "heart attack", "pneumonia")
+  
   
   ## Check that state and outcome are valid
   if(state %in% state.abb) {
@@ -74,16 +74,29 @@ rankhospital <- function(state, outcome, num = "best") {  # beg. of fn.
                                 out.state$Hospital.Name, na.last=NA),]
       
       
-      # create new variable with the rank of each outcomes 
+      # create new variable with the rank of each outcome 
       ha.dat$ha.rank <- rank(ha.dat$Heart.Attack, ties.method = "first")
       hf.dat$hf.rank <- rank(hf.dat$Heart.Failure, ties.method = "first")
       pn.dat$pn.rank <- rank(pn.dat$Pneumonia, ties.method = "first")
    
-      # get the best and worst
-      # best is rank 1, 1st hospital
-      # worst is last rank without an NA, 1st hospital
-     ifelse(num=="best", num <- 1, num <- num)
-     ifelse(num=="worst", num <- max(hf.dat$hf.rank), num <- num)
+      # assign "best" and "worst" to ranks
+      # best is rank 1, worst is highest rank
+      # need to do this for each outcome
+      if(outcome=="heart attack") {
+        ifelse(num=="best", num <- 1, num <- num)
+        ifelse(num=="worst", num <- max(ha.dat$ha.rank), num <- num)
+      } else { 
+        if(outcome=="heart failure") {
+          ifelse(num=="best", num <- 1, num <- num)
+          ifelse(num=="worst", num <- max(hf.dat$hf.rank), num <- num)  
+        } else { # the last option, which is pneumonia
+            ifelse(num=="best", num <- 1, num <- num)
+            ifelse(num=="worst", num <- max(pn.dat$pn.rank), num <- num)  
+          }
+        }
+      
+      
+      
       
       ## Return hospital name in that state with the given rank
       ## 30-day death rate
