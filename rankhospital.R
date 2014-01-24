@@ -40,8 +40,8 @@ rankhospital <- function(state, outcome, num = "best") {
   
   
   ## Check that state and outcome are valid
- #! if(state %in% state.abb) {
-  #!   if(outcome %in% out.set) {
+  if(state %in% state.abb) {
+    if(outcome %in% out.set) {
     
       # pull out data for relevant state and variables
       out.state <- outcome.dat[which(outcome.dat$State==state), 
@@ -121,13 +121,13 @@ rankhospital <- function(state, outcome, num = "best") {
   }   
       
       
- #!  }  # end if(outcome)
+   }  # end if(outcome)
     
-  #!    } else { stop("invalid outcome") }
+      else { stop("invalid outcome") }
 
-  #!  }  # end if(state)
+    }  # end if(state)
   
-  #!  else { stop("invalid state") }        
+    else { stop("invalid state") }        
 
 }  # end rankhospital
 
