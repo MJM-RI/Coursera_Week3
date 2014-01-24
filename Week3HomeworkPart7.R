@@ -37,38 +37,45 @@ rankall <- function(outcome, num = "best") {
   ## define valid outcomes
   out.set <- c("heart failure", "heart attack", "pneumonia")
   
-  
   ## Check that outcome is valid
   if(outcome %in% out.set) {
       
-      # pull out data for relevant state and variables
-      out.state <- outcome.dat[which(outcome.dat$State==state), 
-                               c(2,7,11,17,23)]
-      
-      # rename the relevant variables to shorter names
-      library(reshape)
-      out.state <- rename(out.state, 
-                          c("Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"=
+  
+   # rename the relevant variables to shorter names
+   library(reshape)
+   outcome.dat <- rename(outcome.dat, 
+              c("Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"=
                               "Heart.Attack"))
-      out.state <- rename(out.state, 
-                          c("Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"=
+   outcome.dat <- rename(outcome.dat, 
+              c("Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"=
                               "Heart.Failure"))
-      out.state <- rename(out.state, 
-                          c("Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"=
+   outcome.dat <- rename(outcome.dat, 
+              c("Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"=
                               "Pneumonia"))
       
-      # turn relevant variables into numeric
-      out.state$Heart.Attack <- as.numeric(out.state$Heart.Attack)
-      out.state$Heart.Failure <- as.numeric(out.state$Heart.Failure)
-      out.state$Pneumonia <- as.numeric(out.state$Pneumonia)
-      
-      
-      #  sort by outcome and then hospital; the na.last option removes na
-      ha.dat <- out.state[order(out.state$Heart.Attack, 
+   # turn relevant variables into numeric
+   outcome.dat$Heart.Attack <- as.numeric(outcome.dat$Heart.Attack)
+   outcome.dat$Heart.Failure <- as.numeric(outcome.dat$Heart.Failure)
+   outcome.dat$Pneumonia <- as.numeric(outcome.dat$Pneumonia)
+  
+   # for each outcome, create rankings by state
+   #TESTING
+   try.dat <- outcome.dat[, c("State", "Heart.Attack", "Hospital.Name")]
+   # add a rank col by state
+   try.dat <- cbind(try.dat, rank=ave(try.dat$Heart.Attack, 
+                                      try.dat$State, FUN=rank)) 
+   #  sort by outcome and then hospital; the na.last option removes na
+   sort.dat <- try.dat[order(try.dat$State, try.dat$rank, 
+                             try.dat$Hospital.Name, na.last=NA),]
+   
+   
+   
+    #  sort by outcome and then hospital; the na.last option removes na
+    ha.dat <- out.state[order(out.state$Heart.Attack, 
                                 out.state$Hospital.Name, na.last=NA),]
-      hf.dat <- out.state[order(out.state$Heart.Failure, 
+    hf.dat <- out.state[order(out.state$Heart.Failure, 
                                 out.state$Hospital.Name, na.last=NA),]
-      pn.dat <- out.state[order(out.state$Pneumonia, 
+    pn.dat <- out.state[order(out.state$Pneumonia, 
                                 out.state$Hospital.Name, na.last=NA),]
       
       
