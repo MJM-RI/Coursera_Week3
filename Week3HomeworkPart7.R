@@ -36,6 +36,7 @@ rankall <- function(outcome, num = "best") {
   
   ## define valid outcomes
   out.set <- c("heart failure", "heart attack", "pneumonia")
+
   
   ## Check that outcome is valid
   if(outcome %in% out.set) {
@@ -58,10 +59,21 @@ rankall <- function(outcome, num = "best") {
    outcome.dat$Heart.Failure <- as.numeric(outcome.dat$Heart.Failure)
    outcome.dat$Pneumonia <- as.numeric(outcome.dat$Pneumonia)
   
+   outcome<-"heart attack"
+   if(outcome=="heart attack") keep="Heart.Attack"
    
+   a<-outcome.dat[,c('State','Hospital.Name',keep)]
    
-   
-   
+   #Bryan's help
+   # Order by state, outcome, hospital - start with heart attack data only
+   ha.dat <- sec.try.dat
+   ha.dat$order<-seq(1:nrow(ha.dat))
+   st.order.dat <- aggregate(x=ha.dat$order, by=list(ha.dat$State), FUN='min')
+   names(st.order.dat)<-c('State','minOrder')
+   st.order.dat$minOrder<-st.order.dat$minOrder-1
+   ha.dat.ord <- merge(st.order.dat, ha.dat, by="State", all=T)
+   ha.dat.ord$rank <- ha.dat.ord$order - ha.dat.ord$minOrder
+   ha.dat.ord <- ha.dat.ord[,-c(2,5)]
    
    #TESTING
    try.dat <- outcome.dat[, c("State", "Heart.Attack", "Hospital.Name")]
