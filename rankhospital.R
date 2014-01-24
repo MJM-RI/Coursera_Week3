@@ -141,3 +141,6 @@ rankhospital("MD", "heart attack", "worst")
 rankhospital("MN", "heart attack", 5000)
 # works
 
+rankhospital("bb", "heart attack", 5000)
+rankhospital("MN", "heart", 5000)
+#these work
