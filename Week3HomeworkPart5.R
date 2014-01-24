@@ -81,7 +81,7 @@ best <- function(state, outcome) {
          } else { # the last option, which is pneumonia
            result <- pn.dat[pn.dat$Pneumonia==min(pn.dat$Pneumonia),] 
            #return(result)
-           return(result.Hospital.Name)
+           return(result$Hospital.Name)
          }
        }
               
