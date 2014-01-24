@@ -95,15 +95,19 @@ rankhospital <- function(state, outcome, num = "best") {
           }
         }
       
-      
-      
-      
       ## Return hospital name in that state with the given rank
-      ## 30-day death rate
+      ## using if...else for outcomes
+      if(outcome=="heart attack") {
+        result <- ha.dat[ha.dat$ha.rank==num,]
+      } else { 
+        if(outcome=="heart failure") {
+          result <- hf.dat[hf.dat$hf.rank==num,]  
+        } else { # the last option, which is pneumonia
+          result <- pn.dat[pn.dat$pn.rank==num,]
+        }
+      }
       
-      #testing
-      result <- hf.dat[hf.dat$hf.rank==num,]
-      print(result$Hospital.Name)
+      return(result$Hospital.Name)
       
       
    }  # end if(outcome)
