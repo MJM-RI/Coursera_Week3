@@ -58,32 +58,26 @@ rankall <- function(outcome, num = "best") {
    outcome.dat$Heart.Failure <- as.numeric(outcome.dat$Heart.Failure)
    outcome.dat$Pneumonia <- as.numeric(outcome.dat$Pneumonia)
   
-   # for each outcome, create rankings by state
+   
+   
+   
+   
+   
    #TESTING
    try.dat <- outcome.dat[, c("State", "Heart.Attack", "Hospital.Name")]
-   # add a rank col by state
-   try.dat <- cbind(try.dat, rank=ave(try.dat$Heart.Attack, 
-                                      try.dat$State, FUN=rank)) 
-   #  sort by outcome and then hospital; the na.last option removes na
-   sort.dat <- try.dat[order(try.dat$State, try.dat$rank, 
-                             try.dat$Hospital.Name, na.last=NA),]
+   # Order by state, outcome, hospital
+   sec.try.dat <- try.dat[order(try.dat$State, try.dat$Heart.Attack, 
+                               try.dat$Hospital.Name , na.last=NA), ]
+   #this works
+   
+   # run through the list of states and find rank "num"
    
    
    
-    #  sort by outcome and then hospital; the na.last option removes na
-    ha.dat <- out.state[order(out.state$Heart.Attack, 
-                                out.state$Hospital.Name, na.last=NA),]
-    hf.dat <- out.state[order(out.state$Heart.Failure, 
-                                out.state$Hospital.Name, na.last=NA),]
-    pn.dat <- out.state[order(out.state$Pneumonia, 
-                                out.state$Hospital.Name, na.last=NA),]
-      
-      
-      # create new variable with the rank of each outcome 
-      ha.dat$ha.rank <- rank(ha.dat$Heart.Attack, ties.method = "first")
-      hf.dat$hf.rank <- rank(hf.dat$Heart.Failure, ties.method = "first")
-      pn.dat$pn.rank <- rank(pn.dat$Pneumonia, ties.method = "first")
-      
+   
+   
+   
+   
       # assign "best" and "worst" to ranks
       # best is rank 1, worst is highest rank
       # need to do this for each outcome
