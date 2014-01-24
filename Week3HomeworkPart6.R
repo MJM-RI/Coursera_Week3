@@ -73,23 +73,22 @@ rankhospital <- function(state, outcome, num = "best") {
       
       
       # create new variable with the rank of each outcomes 
-      # and "best" and "worst"
       ha.dat$ha.rank <- rank(ha.dat$Heart.Attack, ties.method = "first")
-      ifelse(ha.dat$ha.rank==1, ha.dat$best <- TRUE, ha.dat$best <- FALSE)
-      out.state$hf.rank <- rank(out.state$Heart.Failure, na.last=TRUE, 
-                                ties.method = "first")
-      out.state$pn.rank <- rank(out.state$Pneumonia, na.last=TRUE, 
-                                ties.method = "first")
-      
-      
+      hf.dat$hf.rank <- rank(hf.dat$Heart.Failure, ties.method = "first")
+      pn.dat$pn.rank <- rank(pn.dat$Pneumonia, ties.method = "first")
+   
       # get the best and worst
       # best is rank 1, 1st hospital
       # worst is last rank without an NA, 1st hospital
-      
+     ifelse(num=="best", num <- 1, num <- num)
+     ifelse(num=="worst", num <- max(hf.dat$hf.rank), num <- num)
       
       ## Return hospital name in that state with the given rank
       ## 30-day death rate
       
+      #testing
+      result <- hf.dat[hf.dat$hf.rank==num,]
+      print(result$Hospital.Name)
       
       
   } else {
@@ -103,6 +102,9 @@ rankhospital <- function(state, outcome, num = "best") {
 #other code for testing
 state <- "TX"
 outcome <- "heart failure"
+num <- "worst"
+  3
+  "best"
 head(outcome.dat)
 names(out.state)
 summary(out.state)
