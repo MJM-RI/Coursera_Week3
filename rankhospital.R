@@ -29,11 +29,13 @@
 # out.hosp - data for state, hospitals, outcomes of interest
 
 
-# Function template:
-rankhospital <- function(state, outcome, num = "best") {
+# Function:
+rankhospital <- function(state, outcome, num = "best") {  # beg. of fn.
+  
   ## Read outcome data
   outcome.dat <- read.csv("outcome-of-care-measures.csv",
                           colClasses = "character")
+  
   ## define valid outcomes
   out.set <- c("heart failure", "heart attack", "pneumonia")
   
@@ -91,41 +93,12 @@ rankhospital <- function(state, outcome, num = "best") {
       print(result$Hospital.Name)
       
       
-  } else {
-    stop("invalid state")
-    } # end if(outcome)...else stop
-       } else {
-       stop("invalid outcome")
-    }  # end if(state)...else stop
-}  # end function
+   }  # end if(outcome)
+    
+     } else { stop("invalid outcome") }
 
-#other code for testing
-state <- "TX"
-outcome <- "heart failure"
-num <- "worst"
-  3
-  "best"
-head(outcome.dat)
-names(out.state)
-summary(out.state)
-str(out.state)
-summary(Heart.Failure)
-summary(Pneumonia)
-head(ha.rank)
+  }  # end if(state)
+  
+  else { stop("invalid state") }        
 
-#test ordering
-test.order <- out.state[order(out.state$Hospital.Name),]
-
-#this works but eliminates the NA values so will not merge back into the data
-ha.rank <- rank(out.state$Heart.Attack, na.last=NA, 
-                          ties.method = "first")
-
-#!This didn't work because it doesn't order the hospitals
-# create new variables to rank each of the outcomes, keeping NA
-#  for now; NA values will go at the end of the rankings
-out.state$ha.rank <- rank(out.state$Heart.Attack, na.last=TRUE, 
-                          ties.method = "first")
-out.state$hf.rank <- rank(out.state$Heart.Failure, na.last=TRUE, 
-                          ties.method = "first")
-out.state$pn.rank <- rank(out.state$Pneumonia, na.last=TRUE, 
-                          ties.method = "first")
+}  # end rankhospital
