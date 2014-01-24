@@ -106,8 +106,19 @@ rankhospital <- function(state, outcome, num = "best") {
           result <- pn.dat[pn.dat$pn.rank==num,]
         }
       }
-      
-      return(result$Hospital.Name)
+  
+  ## Return the result    
+  ##  Return NA if num is too large  
+  ## need to do this for each outcome
+  if(outcome=="heart attack") {
+    ifelse(num > max(ha.dat$ha.rank), return(NA), return(result$Hospital.Name))
+  } else { 
+  if(outcome=="heart failure") {
+    ifelse(num > max(hf.dat$hf.rank), return(NA), return(result$Hospital.Name))
+    } else { # the last option, which is pneumonia
+    ifelse(num > max(pn.dat$pn.rank), return(NA), return(result$Hospital.Name))
+    }
+  }   
       
       
  #!  }  # end if(outcome)
@@ -119,3 +130,14 @@ rankhospital <- function(state, outcome, num = "best") {
   #!  else { stop("invalid state") }        
 
 }  # end rankhospital
+
+#  Tests of function
+rankhospital("TX", "heart failure", 4)
+#works
+
+rankhospital("MD", "heart attack", "worst")
+#works
+
+rankhospital("MN", "heart attack", 5000)
+# works
+
