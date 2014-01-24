@@ -71,7 +71,12 @@ rankall <- function(outcome, num = "best") {
    #this works
    
    # run through the list of states and find rank "num"
-   
+   # 1st define a function to select the relevant row for each state
+   num <- 1
+   row.select <- function(state.abb){
+     state.res <- sec.try.dat[sec.try.dat$State=="state.abb",][num,]
+   }
+   result <- sapply(state.abb, row.select)
    
    
    
