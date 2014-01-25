@@ -119,54 +119,9 @@ rankall <- function(outcome, num = "best") {
    outcome2.dat <- cbind(outcome2.dat, result)
    
 
-   
-   
-   
-   
-   
-   
-############################################################################## 
-   num <- "best"
-   
-   # deal with num="best"
-   ifelse(num=="best", num <- 1, num <- num)
-   
-   
-   #Try for single states
-   State
-   
-   
-   
-   # create a 2x54 dataframe for the output
-   result.dat <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54)) 
-   
-   for(j in statenames) {  # loop over states
-     for(k in 1:worst.rank) { 
-     if(num=="worst") {
-       worst.hosp <- subset(outcome2.dat,
-                            subset = rank==worst.rank,
-                            select = c(Hospital.Name, State))
-       result.dat[j,] <- worst.hosp
-       
-     } else { 
-       if(num>worst.rank) {
-       result.dat[j,] <- "NA"
-         
-       } else {
-         
-         result.dat[j,] <- subset(outcome2.dat,
-                                  subset = rank==num,
-                                  select = c(Hospital.Name, State))
-                    
-     } # end loop of one state
-          
-   } # end loop of all states
+  # set "result" to FALSE to start
+  outcome2.dat$result <- FALSE   
     
-     
-     #NOT WORKING
-   
-#####################################################################
-     
    # set "result" = true in outcome2.dat to keep the correct obs.
   # This picks obs where num=rank, including num="best"
    ifelse(num=="best", num <- 1, num <- num)
@@ -181,13 +136,48 @@ rankall <- function(outcome, num = "best") {
      if((num=="worst" &  outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank)) 
               outcome2.dat[i,]$result <- TRUE
              }
+  
+  # select the rows with result = TRUE
+   result.dat <- subset(outcome2.dat,
+                        subset = result==TRUE,
+                        select = c(Hospital.Name, State)
+     )
+  
+   # rename the columns
+   names(result.dat)<-c('hospital','state')
+   
+   
+   ## Return the result    
+   return(result.dat)
+   
+  }  # end if(outcome)
+  
+  else { stop("invalid outcome") }    
+  
+}  # end rankall
+
+   
+   
+#####################################################################  
+# Tests
+rankall("heart attack", 20)
+rankall("pneumonia", worst)
+rankall("heart failure", 10)
+   
      
+   #####################################################################  
+     
+     
+     select = c(Hospital.Name, State, rank, )
+     subset(outcome2.dat,
+            subset = rank==worst.rank,
+            select = c(Hospital.Name, State))
   # This picks obs where num=rank, including num="best"
      
      
      test.dat <- outcome2.dat$worst.yes
      
-  
+  num <- "worst"
      num <- "best"
    num <- 100  
      
@@ -334,3 +324,43 @@ rankall <- function(outcome, num = "best") {
 
 
 
+############################################################################## 
+num <- "best"
+
+# deal with num="best"
+ifelse(num=="best", num <- 1, num <- num)
+
+
+#Try for single states
+State
+
+
+
+# create a 2x54 dataframe for the output
+result.dat <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54)) 
+
+for(j in statenames) {  # loop over states
+  for(k in 1:worst.rank) { 
+    if(num=="worst") {
+      worst.hosp <- subset(outcome2.dat,
+                           subset = rank==worst.rank,
+                           select = c(Hospital.Name, State))
+      result.dat[j,] <- worst.hosp
+      
+    } else { 
+      if(num>worst.rank) {
+        result.dat[j,] <- "NA"
+        
+      } else {
+        
+        result.dat[j,] <- subset(outcome2.dat,
+                                 subset = rank==num,
+                                 select = c(Hospital.Name, State))
+        
+      } # end loop of one state
+      
+    } # end loop of all states
+    
+    
+    #NOT WORKING
+    
