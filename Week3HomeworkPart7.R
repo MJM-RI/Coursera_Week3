@@ -118,11 +118,24 @@ rankall <- function(outcome, num = "best") {
    #join it to outdata2
    outcome2.dat <- cbind(outcome2.dat, result)
    
+
+   
+   
+   
+   
+   
+   
 ############################################################################## 
    num <- "best"
    
    # deal with num="best"
    ifelse(num=="best", num <- 1, num <- num)
+   
+   
+   #Try for single states
+   State
+   
+   
    
    # create a 2x54 dataframe for the output
    result.dat <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54)) 
@@ -152,15 +165,30 @@ rankall <- function(outcome, num = "best") {
      
      #NOT WORKING
    
-   
+#####################################################################
+     
    # set "result" = true in outcome2.dat to keep the correct obs.
-   for (i in 1:nrow(outcome2.dat)) {
+  # This picks obs where num=rank, including num="best"
+  ifelse(num=="best", num <- 1, num <- num)
+  for (i in 1:nrow(outcome2.dat)) {
      ifelse(num==outcome2.dat[i,]$rank, 
             outcome2.dat[i,]$result <- TRUE, 
-            outcome2.dat[i,]$result <-NA)
+            outcome2.dat[i,]$result <- FALSE)
    }
    
-   ###############################################################
+  # where num = "worst"
+     for (i in 1:nrow(outcome2.dat)) {
+       ifelse((num=="worst" &  outcome2.dat$worst.rank==outcome2.dat[i,]$rank), 
+              outcome2.dat[i,]$result <- TRUE, 
+              outcome2.dat[i,]$result <-FALSE)
+     }
+     
+     
+     
+     
+     
+     
+     ###############################################################
    #skip best and worst for now
    # assign the best and worst values to num
    
