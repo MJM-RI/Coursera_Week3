@@ -41,7 +41,6 @@ rankall <- function(outcome, num = "best") {
   ## Check that outcome is valid
   if(outcome %in% out.set) {
       
-  
    # rename the relevant variables to shorter names
    library(reshape)
    outcome.dat <- rename(outcome.dat, 
@@ -59,10 +58,26 @@ rankall <- function(outcome, num = "best") {
    outcome.dat$Heart.Failure <- as.numeric(outcome.dat$Heart.Failure)
    outcome.dat$Pneumonia <- as.numeric(outcome.dat$Pneumonia)
   
-   outcome<-"heart attack"
-   if(outcome=="heart attack") keep="Heart.Attack"
    
-   a<-outcome.dat[,c('State','Hospital.Name',keep)]
+   # set things up to work with any of the 3 outcomes 
+    if(outcome=="heart attack") {
+       outcome.dat <- rename(outcome.dat, c("Heart.Attack" = "outcome"))
+       
+     } else { 
+       if(outcome=="heart failure") {
+         outcome.dat <- rename(outcome.dat, c("Heart.Failure" = "outcome"))
+         
+       } else { # the last option, which is pneumonia
+         
+         outcome.dat <- rename(outcome.dat, c("Pneumonia" = "outcome"))
+       }
+     }
+     
+     
+ ##############################################################################  
+   if(outcome=="heart attack") keep="Heart.Attack"
+      a<-outcome.dat[,c('State','Hospital.Name',keep)]
+   
    
    #Bryan's help
    # Order by state, outcome, hospital - start with heart attack data only
@@ -142,3 +157,13 @@ rankall <- function(outcome, num = "best") {
     else { stop("invalid outcome") }    
   
 }  # end rankhospital
+  
+  
+  
+  
+  #####################
+  # For testing
+  outcome<-"heart attack"
+  outcome<-"heart failure"
+  outcome<-"pneumonia"
+  outcome<-"HEART ATTACK"
