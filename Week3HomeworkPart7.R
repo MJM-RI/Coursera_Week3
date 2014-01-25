@@ -22,9 +22,6 @@
 # out.set - vector of relevant outcomes
 # state.abb - built in data set of 2 letter state abbreviations
 # Note: col. numbers for outcomes of interest are 11, 17, 23
-# out.state - data for only the state of interest
-# ha.dat, hf.dat, pn.dat - data for each outcome of interest
-# ha.rank, etc. - rank variables
 ###############################################################################
 
 # Function:
@@ -58,6 +55,10 @@ rankall <- function(outcome, num = "best") {
    outcome.dat$Heart.Failure <- as.numeric(outcome.dat$Heart.Failure)
    outcome.dat$Pneumonia <- as.numeric(outcome.dat$Pneumonia)
   
+   # keep just the needed variables
+   outcome.dat <- outcome.dat[, c("State", "Hospital.Name", "Heart.Attack", 
+                                  "Heart.Failure", "Pneumonia" )]
+   
    
    # set things up to work with any of the 3 outcomes 
     if(outcome=="heart attack") {
@@ -73,28 +74,48 @@ rankall <- function(outcome, num = "best") {
        }
      }
      
+  # Order by state, outcome, hospital, removing NA for the outcome var.
+  outcome2.dat <- outcome.dat[order(outcome.dat$State, outcome.dat$outcome, 
+                                outcome.dat$Hospital.Name , na.last=NA), ]
      
+  # then rank for each state  
+   # first add a numerical ordering to the whole data set
+   outcome2.dat$order<-seq(1:nrow(outcome2.dat))
+   # then get the minimum order value for each state (in another data frame)
+   st.order.dat <- aggregate(x=outcome2.dat$order, 
+                             by=list(outcome2.dat$State), FUN='min')
+   names(st.order.dat)<-c('State','minOrder')
+   #  subtract 1 from the min for each state   
+   st.order.dat$minOrder<-st.order.dat$minOrder-1
+   
+   #  merge back into the main data set
+   outcome2.dat <- merge(st.order.dat, outcome2.dat, by="State", all=T)
+   
+   #  The rank for each state and hospital is the order - the state's min. order
+   outcome2.dat$rank <- outcome2.dat$order - outcome2.dat$minOrder
+   
+##############################################################################  
+   
+   
+   
+   
+   
+   ha.dat.ord <- ha.dat.ord[,-c(2,5)]
+   
+  
+   
+   
+   summary(outcome2.dat)
+   summary(outcome.dat$Heart.Attack)
+   
  ##############################################################################  
    if(outcome=="heart attack") keep="Heart.Attack"
       a<-outcome.dat[,c('State','Hospital.Name',keep)]
    
    
-   #Bryan's help
-   # Order by state, outcome, hospital - start with heart attack data only
-   ha.dat <- sec.try.dat
-   ha.dat$order<-seq(1:nrow(ha.dat))
-   st.order.dat <- aggregate(x=ha.dat$order, by=list(ha.dat$State), FUN='min')
-   names(st.order.dat)<-c('State','minOrder')
-   st.order.dat$minOrder<-st.order.dat$minOrder-1
-   ha.dat.ord <- merge(st.order.dat, ha.dat, by="State", all=T)
-   ha.dat.ord$rank <- ha.dat.ord$order - ha.dat.ord$minOrder
-   ha.dat.ord <- ha.dat.ord[,-c(2,5)]
    
-   #TESTING
-   try.dat <- outcome.dat[, c("State", "Heart.Attack", "Hospital.Name")]
-   # Order by state, outcome, hospital
-   sec.try.dat <- try.dat[order(try.dat$State, try.dat$Heart.Attack, 
-                               try.dat$Hospital.Name , na.last=NA), ]
+   
+   
    #this works
    
    # run through the list of states and find rank "num"
