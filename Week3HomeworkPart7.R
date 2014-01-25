@@ -169,24 +169,27 @@ rankall <- function(outcome, num = "best") {
      
    # set "result" = true in outcome2.dat to keep the correct obs.
   # This picks obs where num=rank, including num="best"
-  ifelse(num=="best", num <- 1, num <- num)
-  for (i in 1:nrow(outcome2.dat)) {
-     ifelse(num==outcome2.dat[i,]$rank, 
-            outcome2.dat[i,]$result <- TRUE, 
-            outcome2.dat[i,]$result <- FALSE)
-   }
-   
-  # where num = "worst"
-     for (i in 1:nrow(outcome2.dat)) {
-       ifelse((num=="worst" &  outcome2.dat$worst.rank==outcome2.dat[i,]$rank), 
-              outcome2.dat[i,]$result <- TRUE, 
-              outcome2.dat[i,]$result <-FALSE)
+   ifelse(num=="best", num <- 1, num <- num)
+    for (i in 1:nrow(outcome2.dat)) {
+      ifelse(num==outcome2.dat[i,]$rank | outcome2.dat[i,]$worst.yes==TRUE , 
+             outcome2.dat[i,]$result <- TRUE , 
+             outcome2.dat[i,]$result <- FALSE)
      }
      
+  # where num = "worst"
+     for (i in 1:nrow(outcome2.dat)) {
+     if((num=="worst" &  outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank)) 
+              outcome2.dat[i,]$result <- TRUE
+             }
+     
+  # This picks obs where num=rank, including num="best"
      
      
+     test.dat <- outcome2.dat$worst.yes
      
-     
+  
+     num <- "best"
+   num <- 100  
      
      ###############################################################
    #skip best and worst for now
