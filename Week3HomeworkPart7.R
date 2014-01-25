@@ -33,7 +33,10 @@ rankall <- function(outcome, num = "best") {
   
   ## define valid outcomes
   out.set <- c("heart failure", "heart attack", "pneumonia")
-
+  
+  # get the state names frome the data set
+  outcome.dat$State <- as.factor(outcome.dat$State)
+  statenames <- levels(outcome.dat$State)
   
   ## Check that outcome is valid
   if(outcome %in% out.set) {
@@ -94,8 +97,6 @@ rankall <- function(outcome, num = "best") {
    #  The rank for each state and hospital is the order - the state's min. order
    outcome2.dat$rank <- outcome2.dat$order - outcome2.dat$minOrder
    
-   
-#############################################################################   
  # create a logical variable for "worst"
   # first get the "worst" value for each state
    st.max.dat <- aggregate(x=outcome2.dat$rank, 
@@ -104,36 +105,126 @@ rankall <- function(outcome, num = "best") {
    # then merge this back into the data set
    outcome2.dat <- merge(st.max.dat, outcome2.dat, by="State", all=T)
   
- 
+  # make a new logical variable for the worst rank for each state 
   for (i in 1:nrow(outcome2.dat)) {
     ifelse(outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank, 
          outcome2.dat[i,]$worst.yes <- TRUE, 
            outcome2.dat[i,]$worst.yes <-FALSE)
       }
    
-   # then create the worst.yes variable
-   outcome2.dat$worst.yes <- FALSE
+     
+  # create a vector the same no. of rows as outcome2.dat
+   result <- rep(NA, nrow(outcome2.dat))
+   #join it to outdata2
+   outcome2.dat <- cbind(outcome2.dat, result)
    
 ############################################################################## 
+   num <- "best"
    
-   # create a 2x50 dataframe for the output
-   result <- data.frame(hospital=rep(NA, 50), state=rep(NA, 50))
- 
+   # deal with num="best"
+   ifelse(num=="best", num <- 1, num <- num)
    
-   # loop over states to get the outcome for each
-   For(i in outcome2.dat$State) {
+   # create a 2x54 dataframe for the output
+   result.dat <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54)) 
    
-     # assign the best and worst values to num
-     ifelse(num=="best", num <- 1, num <- num)
-     ifelse(num=="worst", num <- outcome2.dat$worst.rank, num <- num)
-  
+   for(j in statenames) {  # loop over states
+     for(k in 1:worst.rank) { 
+     if(num=="worst") {
+       worst.hosp <- subset(outcome2.dat,
+                            subset = rank==worst.rank,
+                            select = c(Hospital.Name, State))
+       result.dat[j,] <- worst.hosp
+       
+     } else { 
+       if(num>worst.rank) {
+       result.dat[j,] <- "NA"
+         
+       } else {
+         
+         result.dat[j,] <- subset(outcome2.dat,
+                                  subset = rank==num,
+                                  select = c(Hospital.Name, State))
+                    
+     } # end loop of one state
+          
+   } # end loop of all states
+    
      
-     # put data into the data frame "outfile"
-     result[i,] <- c(outcome2.dat$Hospital.Name[i],nobs)
-     
+     #NOT WORKING
+   
+   
+   # set "result" = true in outcome2.dat to keep the correct obs.
+   for (i in 1:nrow(outcome2.dat)) {
+     ifelse(num==outcome2.dat[i,]$rank, 
+            outcome2.dat[i,]$result <- TRUE, 
+            outcome2.dat[i,]$result <-NA)
+   }
+   
+   ###############################################################
+   #skip best and worst for now
+   # assign the best and worst values to num
+   
+   ifelse(num=="worst", num <- outcome2.dat$worst.rank, num <- num)
+   ###############################################################
+   
+   
+   # pick the rows with the rank
+   for (i in 1:nrow(outcome2.dat)) {
+     ifelse(outcome2.dat[i,]$rank==outcome2.dat[i,]$rank, 
+            outcome2.dat[i,]$worst.yes <- TRUE, 
+            outcome2.dat[i,]$worst.yes <-FALSE)
    }
    
    
+   
+   
+   num <- 100
+   
+   # create a 2x54 dataframe for the output
+   result.dat <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54))  
+   
+   # output just the obs. we want 
+   for(j in statenames) {
+   result.dat <- subset(outcome2.dat,
+                        subset = rank==num,
+                        select = c(Hospital.Name, State))
+        }
+
+   
+   names(result.dat)<-c('hospital','state')
+   #this doesn't keep all the states
+   
+   result2.dat  <- data.frame(hospital=rep(NA, 54), state=rep(NA, 54))
+   
+   result2.dat <- merge(result.dat, result2.dat, by="State", all=T)
+   
+   
+   
+   
+  
+   
+  
+   
+   
+   
+   
+   
+ 
+      
+   keep.dat <- outcome2.dat[outcome2.dat$rank] 
+   
+   
+   # loop over states to get the outcome for each
+   For(i in 1:50) {
+     
+     
+     
+     # put data into the data frame "outfile"
+     result[i,] <- c(outcome2.dat$Hospital[i,].Name, outcome2.dat[i,]$State)
+     
+   }
+   
+   #############################################################################   
    
   
    ## Return hospital name in that state with the given rank
