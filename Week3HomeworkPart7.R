@@ -129,12 +129,12 @@ rankall <- function(outcome, num = "best") {
   # Create a variable to flag wanted results 
   # create a vector the same no. of rows as outcome2.dat
    result <- rep(NA, nrow(outcome2.dat))
-   #join it to outdata2
+   #join it to outcome2.dat
    outcome2.dat <- cbind(outcome2.dat, result)
   # set "result" to FALSE to start
   outcome2.dat$result <- FALSE   
 
-   #!!!!!!!!!    
+      
   # set "result" = true in outcome2.dat to keep the correct obs.
   # This picks obs where num=rank, including num="best"
    ifelse(num=="best", num <- 1, num <- num)
@@ -145,8 +145,15 @@ rankall <- function(outcome, num = "best") {
                & outcome2.dat[i,]$worst.yes==TRUE) , 
              outcome2.dat[i,]$result <- TRUE , 
              outcome2.dat[i,]$result <- FALSE)
-     }
-     
+   }
+   
+   for (i in 1:nrow(outcome2.dat)) {
+      # rename hospital name to NA for cases where rank>max(rank)
+      if(num > outcome2.dat[i,]$worst.rank & outcome2.dat[i,]$result==TRUE) {
+        outcome2.dat[i,]$Hospital.Name <- "NA"
+      } #end if
+   } # end for
+   
   # where num = "worst"
      for (i in 1:nrow(outcome2.dat)) {
      if((num=="worst" &  outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank)) 
