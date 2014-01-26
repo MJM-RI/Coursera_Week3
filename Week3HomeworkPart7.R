@@ -134,7 +134,7 @@ rankall <- function(outcome, num = "best") {
   # set "result" to FALSE to start
   outcome2.dat$result <- FALSE   
 
-  num <- "worst"    
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
   # set "result" = true in outcome2.dat to keep the correct obs.
   # This picks obs where num=rank, including num="best"
    ifelse(num=="best", num <- 1, num <- num)
@@ -146,16 +146,16 @@ rankall <- function(outcome, num = "best") {
              outcome2.dat[i,]$result <- TRUE , 
              outcome2.dat[i,]$result <- FALSE)
       
-      if(num="worst") {
-        ifelse(outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank)) 
-        outcome2.dat[i,]$result <- TRUE
-      }#end if
-
+      ifelse(num=="worst" 
+             & outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank, 
+            outcome2.dat[i,]$result <- TRUE,
+            outcome2.dat[i,]$result <- FALSE)
+      
       if(num > outcome2.dat[i,]$worst.rank & outcome2.dat[i,]$result==TRUE) {
       outcome2.dat[i,]$Hospital.Name <- "NA"
       } #end if
    }#end for
-   
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
     
   # select the rows with result = TRUE
    result.dat <- subset(outcome2.dat,
