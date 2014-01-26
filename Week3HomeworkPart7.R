@@ -23,6 +23,16 @@
 # state.abb - built in data set of 2 letter state abbreviations
 # Note: col. numbers for outcomes of interest are 11, 17, 23
 ###############################################################################
+#####################################################################  
+# Tests
+rankall("heart attack", 20)
+rankall("pneumonia", worst)
+rankall("heart failure", 10)
+
+outcome <- "heart attack"
+num <- 20
+#####################################################################  
+
 
 # Function:
 rankall <- function(outcome, num = "best") {  
@@ -104,29 +114,35 @@ rankall <- function(outcome, num = "best") {
    names(st.max.dat)<-c('State','worst.rank')
    # then merge this back into the data set
    outcome2.dat <- merge(st.max.dat, outcome2.dat, by="State", all=T)
-  
-  # make a new logical variable for the worst rank for each state 
+ 
+   # create a vector the same no. of rows as outcome2.dat
+   worst.yes <- rep(NA, nrow(outcome2.dat))
+   #join it to outdata2
+   outcome2.dat <- cbind(outcome2.dat, worst.yes)
+ # make a new logical variable for the worst rank for each state 
   for (i in 1:nrow(outcome2.dat)) {
     ifelse(outcome2.dat[i,]$worst.rank==outcome2.dat[i,]$rank, 
          outcome2.dat[i,]$worst.yes <- TRUE, 
            outcome2.dat[i,]$worst.yes <-FALSE)
       }
-   
-     
+  
+  # Create a variable to flag wanted results 
   # create a vector the same no. of rows as outcome2.dat
    result <- rep(NA, nrow(outcome2.dat))
    #join it to outdata2
    outcome2.dat <- cbind(outcome2.dat, result)
-   
-
   # set "result" to FALSE to start
   outcome2.dat$result <- FALSE   
-    
-   # set "result" = true in outcome2.dat to keep the correct obs.
+
+   #!!!!!!!!!    
+  # set "result" = true in outcome2.dat to keep the correct obs.
   # This picks obs where num=rank, including num="best"
    ifelse(num=="best", num <- 1, num <- num)
-    for (i in 1:nrow(outcome2.dat)) {
-      ifelse(num==outcome2.dat[i,]$rank | outcome2.dat[i,]$worst.yes==TRUE , 
+    
+   for (i in 1:nrow(outcome2.dat)) {
+      ifelse(num==outcome2.dat[i,]$rank | 
+              (num>outcome2.dat[i,]$worst.rank 
+               & outcome2.dat[i,]$worst.yes==TRUE) , 
              outcome2.dat[i,]$result <- TRUE , 
              outcome2.dat[i,]$result <- FALSE)
      }
@@ -163,7 +179,10 @@ rankall <- function(outcome, num = "best") {
 rankall("heart attack", 20)
 rankall("pneumonia", worst)
 rankall("heart failure", 10)
-   
+
+outcome <- "heart attack"
+num <- 20
+
      
    #####################################################################  
      
